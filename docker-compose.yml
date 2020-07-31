@@ -1,0 +1,31 @@
+version: '3.8'
+services:
+  nginx-php-fpm:
+    image: my-nginx-php-fpm
+    build:
+      dockerfile: Dockerfile
+      context: .
+    volumes:
+      - type: bind
+        source: ./nginx-backend.conf
+        target: /etc/nginx/nginx.conf
+      - type: bind
+        source: ./index.php
+        target: /www/index.php
+      - type: bind
+        source: ./wrapper-backend.sh
+        target: /opt/wrapper.sh
+  nginx-service:
+    image: nginx:alpine
+    ports:
+      - "8888:80"
+    volumes:
+      - type: bind
+        source: ./nginx-frontend.conf
+        target: /etc/nginx/nginx.conf
+      - type: bind
+        source: ./access.log
+        target: /var/log/nginx/access.log
+      - type: bind
+        source: ./error.log
+        target: /var/log/nginx/error.log
